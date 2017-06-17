@@ -5,7 +5,7 @@ categories: python
 tags: [python]
 ---
 
-##获取网络资源
+## 获取网络资源
 
 安装好PycURL之后，我们就可以执行一些网络操作了。最简单的是通过一个网站的URL获取它的相关资源。使用PycURL执行一个网络请求，需要以下步骤：
 1. 创建一个pucurl.Curl的实例。
