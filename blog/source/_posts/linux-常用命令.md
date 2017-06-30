@@ -61,6 +61,53 @@ $mv [-fiu] 文件或目录 目标文件或目录
 -i: 目标文件存在，询问是否覆盖
 -u: 目标文件存在，且较新时，才会更新
 ```
+## 命令与文件查询
+1. which：可以查询脚本文件的位置，比如 `ifconfig` 命令的位置。但是不能够查询bash内置的命令，比如`cd`
+```bash
+which [-a] command
+-a: 列出所有 PATH 目录中包含的命令，没有该参数，只会列出第一个
+```
+2. whereis： 定位命令的二进制，源文件和帮助文件
+```bash
+whereis [-bmsu] 文件或目录名
+-b : 只找二进制文件
+-m : 在menu下查找
+-s : 只找源文件
+-u : 其他文件
+```
+3. locate： 根据文件名搜索文件，输出所有的文件。因为是从存储文件记录的数据库文件`/var/lib/mlocate`中读取的，所以速度快。但是数据库文件是定时更新的，所以新增的文件查询不到。可以通过`updatedb`来更新文件，因为该命令是查找硬盘的，所以执行比较慢。
+```bash
+locate [-ir] 文件名
+-i: 忽略大小写差异
+-r: 可以接正则表达式
+```
+4. find: 在目录下搜索文件，与xargs一起使用，功能强大
+```bash
+$ find [PATH] [option] [action]
+-mtime n: 在n天之前的 一天内 被更改过的文件
+-mtime +n: 在n天之前（不含n天）被更改过的文件
+-mtime -n: 在n天之内（含n天） 被更改过的文件
+-newer file: file问一个文件的路径，列出比file新的文件
+
+-name filename: 查找文件名为filename的文件， 使用通配符表示文件名时，需要加上 ''
+-size [+-]SIZE: 查找比size还要大(+)或小(-)的文件 ,可以是用K\M\G
+
+-exec command: command为命令，该命令可以处理查找结果，不支持别名。 相对来说配合xargs更强大
+$ find / -exec ls -l {}\;
+
+```
+## 更改权限
+权限分数为： r(read)=4, w(write)=2, x(execute)=1
+```bash
+$ chgrp [-R（递归更改)] groupname dirname/filename: 改变文件所属用户组
+$ chown [-R（递归更改)] username[:groupname] dirname/filename：改变文件所有者
+$ chmod [-R（递归更改)] [options] dirname/filename：改变文件所有者
+$ chmod 761 file: 将文件权限更改为 =rwxrw---x
+$ chmod u=rwx,g=rw,o=x file: u(user) g(group) o(others) =(设置) +(增加) -(取消)
+
+```
+
+
 ## 查看文件内容
 1. cat
 ```bash
@@ -105,3 +152,10 @@ tail [-n number] 文件
 -n: 表示显示几行
 ```
 另外可以修改 /etc/issue文件来改变终端的提示信息
+
+## 其他快捷方式
+1. 使用快捷键 `ctrl+r` 可以快速使用历史命令
+
+
+## 时间
+date +%Y%m%d

@@ -5,13 +5,13 @@ tags: [markdown]
 categories: nodejs
 ---
 
-## 斜体 
-*这是斜体1*
-_这是斜体2_
+## 斜体
 ```
 *这是斜体1*
 _这是斜体2_
 ```
+*这是斜体1*
+_这是斜体2_
 <!-- more -->
 ## 粗体
 ```
@@ -28,12 +28,14 @@ __这是粗体__
 ~~删除线.~~
 
 ## 下划线
+```
 <span style="text-decoration:underline">我带下划线</span>
 <span style="text-decoration:overline">我带上划线</span>
-
+```
 ## 超链接
 ```
 [text](https://www.sogou.com)
+<https://www.sogo.com>
 ```
 [text](https://www.sogou.com)
 <https://www.sogo.com>
@@ -75,6 +77,8 @@ __这是粗体__
 - [ ] 不勾选
 - [x] 勾选 (为aiks)
 ## 代码
+\`\`\`
+\`\`\`
 ```java
 new String();
 ```
@@ -104,11 +108,8 @@ Left         | Center        | Right
 ## 图片
 ```
 ![Alt text][1]
+[1]: https://www.sogou.com/index/images/logo_440x140.v.1.png "搜狗搜索 optional title"
 ```
 ![Alt text][1]
 
-```
-[1]: https://thumbnail0.baidupcs.com/thumbnail/c96194bc7ae2c597e673997dc9966ae0?fid=2318483978-250528-428917790560367&time=1497769200&rt=sh&sign=FDTAER-DCb740ccc5511e5e8fedcff06b081203-5OYOIKsv2Z%2FWavAZFWBRxaGsrfs%3D&expires=8h&chkv=0&chkbd=0&chkpc=&dp-logid=3910915653000159178&dp-callid=0&size=c710_u400&quality=100&vuk=-&ft=video "optional title"
-```
-
-[1]: https://thumbnail0.baidupcs.com/thumbnail/c96194bc7ae2c597e673997dc9966ae0?fid=2318483978-250528-428917790560367&time=1497769200&rt=sh&sign=FDTAER-DCb740ccc5511e5e8fedcff06b081203-5OYOIKsv2Z%2FWavAZFWBRxaGsrfs%3D&expires=8h&chkv=0&chkbd=0&chkpc=&dp-logid=3910915653000159178&dp-callid=0&size=c710_u400&quality=100&vuk=-&ft=video "optional title"
+[1]: https://www.sogou.com/index/images/logo_440x140.v.1.png "搜狗搜索 optional title"
