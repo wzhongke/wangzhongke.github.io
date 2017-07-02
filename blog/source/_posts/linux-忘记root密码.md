@@ -14,7 +14,7 @@ categories: linux
 grub edit> kernel /vmlinuz-2.6.18-92.el5 ro root=LABEL=/ rhgb quiet <strong>single</strong>
 ```
 3. 进入单用户维护模式后，系统会以root的权限直接给你一个shell，此时执行 passwd 就可以修改root密码了。
-
+<!-- more -->
 ## 使用具有sudo权限的用户修改root密码
 执行如下命令，输入用户密码后就可以修改密码了
 ```bash
