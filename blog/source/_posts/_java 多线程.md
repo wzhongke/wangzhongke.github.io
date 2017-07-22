@@ -37,3 +37,66 @@ volatile变量自身具有下列特性：
 | 轻量级锁  | 竞争的线程不会阻塞，提高了程序的相应速度|如果始终得不到锁竞争的线程，使用自旋会消耗CPU|追求响应时间，同步块执行速度非常快
 | 重量级锁  | 线程竞争不使用自旋，不会消耗CPU |线程阻塞，响应时间慢|追求吞吐量，，同步块执行速度较长
 
+## 线程优先级
+在Java线程中，通过一个整型成员变量`priority`来控制优先级，范围是从1-10，默认优先级是5。一般情况下优先级高的线程分配时间片的数量要多于优先级低的线程。
+针对频繁阻塞的线程需要设置的优先级较高，而需要较多CPU时间的线程，要设置较低的优先级，确保处理器不会被独占。
+```
+public class Priority {
+    private static volatile boolean notStart = true;
+    private static volatile boolean notEnd = true;
+
+    public static void main(String [] args) throws InterruptedException {
+        List<Job> jobs = new ArrayList<>();
+        IntStream.range(0, 10).forEach(item -> {
+            int priority = item < 5 ? Thread.MIN_PRIORITY : Thread.MAX_PRIORITY;
+            Job job = new Job(priority);
+            jobs.add(job);
+            Thread thread = new Thread(job, "Thread-" + item);
+            thread.setPriority(priority);
+            thread.start();
+        });
+        notStart = false;
+        TimeUnit.SECONDS.sleep(10);
+        notEnd = false;
+        jobs.forEach(j ->
+            System.out.println("job priority:" + j.priority + " count:" + j.jobCount)
+        );
+    }
+
+    static class Job implements Runnable {
+        private int priority;
+        private long jobCount;
+        Job(int priority) {
+            this.priority = priority;
+        }
+
+        public void run() {
+            while (notStart) {
+                Thread.yield();
+            }
+
+            while (notEnd) {
+                Thread.yield();
+                jobCount ++;
+            }
+        }
+    }
+}
+```
+运行该实例，可以看到优先级1和10有明显的差距，说明优先级生效了。但是程序正确性不能依赖线程优先级的高低，因为有些操作系统会忽略Java设定的优先级。
+```
+job priority:1 count:195451
+job priority:1 count:195475
+job priority:1 count:195460
+job priority:1 count:195443
+job priority:1 count:195462
+job priority:10 count:3726352
+job priority:10 count:3729393
+job priority:10 count:3710086
+job priority:10 count:3733771
+job priority:10 count:3731136
+```
+## Daemon线程
+Daemon线程是一种支持型线程，因为它主要被用作后台调度以及支持性工作。当一个Java虚拟机中不存在非Daemon线程时，Java虚拟机将会退出。通过调用`Thread.setDaemon(true)`将线程设置为Daemon线程。
+> Daemon属性需要在启动线程之前设置才有效
+
