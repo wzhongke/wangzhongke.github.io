@@ -19,6 +19,7 @@ public interface ThreadPool<Job extends Runnable> {
     int getJobSize();
 }
 ```
+<!-- more -->
 客户端可以通过execute来将任务提交到线程池。线程池提供了减少/增大工作线程以及关闭线程的方法。这里工作线程代表着一个重复执行Job的线程，每个有客户端提交的Job都将进入到一个工作队列中，等待工作线程处理。
 ```java
 package com.wang.chapter4.threadpool;

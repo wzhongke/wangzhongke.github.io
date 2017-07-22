@@ -1,5 +1,5 @@
 ---
-title: test
+title: 样例
 date: 2017-06-17 16:05:42
 categories: TEST
 tags: [标签]

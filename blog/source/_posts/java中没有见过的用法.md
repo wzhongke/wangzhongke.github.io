@@ -7,7 +7,7 @@ categories: java
 
 # interface & interface
 在阅读`Comparator`源码时，无意间发现了如下这种用法：
-```
+```java
 public static <T, U extends Comparable<? super U>> Comparator<T> comparing(
             Function<? super T, ? extends U> keyExtractor) {
     Objects.requireNonNull(keyExtractor);
