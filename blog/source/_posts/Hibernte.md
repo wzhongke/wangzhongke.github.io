@@ -6,6 +6,7 @@ categories: java
 ---
 
 Hibernate 是一个高性能的对象/关系型持久化存储和查询的工具。Hibernate 不仅关注于从 Java 类到数据库表的映射（也有 Java 数据类型到 SQL 数据类型的映射），另外也提供了数据查询和检索服务。
+<!-- more -->
 # 术语
 1. [JPA](http://baike.sogou.com/v2503460.htm?fromTitle=JPA): Java Persistence API的简称，中文名Java持久层API。是JDK 5.0注解或XML描述对象－关系表的映射关系，并将运行期的实体对象持久化到数据库中
 
