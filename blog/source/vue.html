@@ -1,0 +1,104 @@
+<template>
+	<div class="hello">
+		<h1>{{ msg }}</h1>
+		<h2> {{ msgfromfather }} </h2> <!-- 可以直接用 -->
+		<button @click="onClickMe">click</button>
+	</div>
+</template>
+<script type="text/javascript">
+	export default {
+		name: 'componentA',
+		data: function() {
+			return {
+				msg: "component a!"
+			}
+		},
+		events: {
+			'addNew' : function (msg) {
+				console.log(msg);
+			}
+		},
+		props: ['msgfromfather'],
+		methods : {
+			onClickMe: function() {
+				this.$emit('children-tell', this.msg)
+			}
+		}
+	}
+</script>
+
+<template>
+	<div id="app">
+		<h1></h1>
+		<input v-model="newItem" v-on:keyup.enter="addNew" />
+		<ul>
+			<li v-for="item in items" v-bind:class="{finished:item.isFinished}" v-on:click="toggleFinish(item)"> {{item.label}}</li>
+		</ul>
+		<p> children tell: {{childWords}} </p>
+		<component-a msgfromfather="hello" v-on:children-tell="listenToChildren"></component-a>
+	</div>
+</template>
+<script type="text/javascript">
+const STORAGE_KEY='todo-vue'
+export default {
+	fetch: function() {
+		return JSON.parse(window.location.getItem(STORAGE_KEY) || '[]')
+	},
+	save: function (items) {
+		window.location.setItem(STORAGE_KEY, JSON.stringify(items))
+	}
+}
+</script>
+<script type="text/javascript">
+	export default {
+		data () {
+			return {
+				title: 'this is a todo list',
+				items: store.fetch(),
+				newItem: '',
+				childWords: ''
+			}
+		},
+		watch: {
+			items: {
+				handler: function (items) {
+					Store.save(items)
+				}
+			},
+			deep: true
+		},
+		events: {
+			'children-tell' : function (){
+				this.childWords = msg;
+			}
+		},
+		methods: {
+			toogleFinish: function(item) {
+				item.isFinished = !item.isFinished;
+			},
+			addNew: function() {
+				this.items.push({
+					label: this.newItem,
+					isFinished: false
+				})
+				this.newItem = ''
+				this.$broadcas('addNew', this.items);
+			},
+			listenToChildren: function(msg) {
+				this.childWords = msg;
+			}
+		}
+	}
+</script>
+
+
+<!-- 
+ Vue 实例实现了一个自定义事件接口，这个事件系统独立于DOM事件
+
+ - 使用 $on() 监听事件
+ - 使用 `$emit()` 触发事件
+ - 使用 `$dispatch()` 派发事件，事件沿着父链冒泡
+ - 使用`$broadcas()` 广播事件，事件向下传导给所有后代
+
+ Vue事件在冒泡过程中第一次触发回调之后自动停止冒泡，除非回调明确返回true
+-->
