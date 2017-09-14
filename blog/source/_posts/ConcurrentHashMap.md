@@ -1,5 +1,8 @@
 ---------
 title: HashMap 和 ConcurrentHashMap
+date: 2017-06-17 19:48:32
+tags: [算法]
+categories: [算法]
 ---------
 
 ## 并发编程为什么使用ConcurrentHashMap

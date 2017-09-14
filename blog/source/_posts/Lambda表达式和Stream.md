@@ -13,7 +13,7 @@ categories: java
 <!-- more -->
 ## 使用Lambda表达式的理想情况
 假设要创建一个社交网络应用程序，想要创建一个功能，使管理员可以在符合特定条件的社交网络应用程序的成员上执行任何类型的操作（例如发送消息）。
-```
+```java
 public class Person {
     public enum Sex {
         MALE, FEMALE
@@ -28,7 +28,7 @@ public class Person {
 ```
 ## 1. 创建搜索符合某个特征成员的方法
 最简单的方式是创建几个方法，每个方法都负责搜索出满足某个特性的成员，比如性别或者年龄。
-```
+```java
 public static void printPersonOlderThan(List<Person> roster, int age) {
     for (Person p: roster) {
         if (p.getAge() >= age)
@@ -39,7 +39,7 @@ public static void printPersonOlderThan(List<Person> roster, int age) {
 上面的方法可能使得应用程序变得脆弱，因为修改Person类，比如修改数据类型，就会导致程序无法正常工作。假设要升级程序，需要改变`Person`类的结构，增加了新的属性，也许还会改变衡量ages的数据类型或者算法。就需要根据这些修改重写API。
 ## 2. 创建一个更通用的搜索方法
 下面的方法更为通用，它打印了指定年龄段的成员
-```
+```java
 public static void printPersonsWithinAgeRange(
     List<Person> roster, int low, int high) {
     for (Person p : roster) {
@@ -52,7 +52,7 @@ public static void printPersonsWithinAgeRange(
 如果想要打印指定性别的成员或者指定性别和特定年龄段的成员该怎么办？如果要改变`Person`类，比如添加一些关系状态或者地理位置的属性，要怎么修改？虽然这个方法比`printPersonOlderThan`更为通用，但是为不同可能的搜索请求，创建不同的方法，依然会使得代码脆弱。可以将指定要在其他类中搜索的条件的代码分开。
 ## 3. 在Local Class中指定搜索情况的代码
 下面的方法可以允许你指定搜索环境。
-```
+```java
 public static void printPersons(
     List<Person> roster, CheckPerson tester) {
     for (Person p : roster) {
@@ -64,13 +64,13 @@ public static void printPersons(
 ```
 上面的方法使用了`CheckPerson`的方法`test`检测了`roster`中每个`Person`实例，如果方法返回`true`，那么`printPerson`会被调用。
 可以通过实现`CheckPerson`接口来指定搜索条件
-```
+```java
 interface CheckPerson {
     boolean test(Person p);
 }
 ```
 下面的类实现了`CheckPerson`接口，它的`test`方法过滤了年龄在18到25之间的男性
-```
+```java
 class CheckPersonEligible implements CheckPerson {
     public boolean test(Person p) {
         return p.gender == Person.Sex.MALE &&
@@ -80,12 +80,12 @@ class CheckPersonEligible implements CheckPerson {
 }
 ```
 可以通过新建一个该类的实例，传递给`printPersons`方法：
-```
+```java
 printPersons(roster, new CheckPersonEligible());
 ```
 虽然这个方式不那么脆弱，如果改变了`Person`的结构，就不必重新方法了，但是还是要有额外的代码：一个新的接口和新的搜索结果的类。因为`CheckPersonEligible`实现了接口，可以用一个匿名类代替这个类，这样可以不用为每次搜索都声明一个新类。
 ## 4. 使用匿名类
-```
+```java
 printPersons(
     roster,
     new CheckPerson() {
@@ -100,7 +100,7 @@ printPersons(
 这种方法减少了所需的代码量，不用每次执行时都创建一个新类。然而，匿名类的语法庞大。因为`CheckPerson`接口只包含一种方法。在这种情况下，可以使用lambda表达式而不是匿名类。
 ## 5. 使用Lambda表达式
 `CheckPerson`接口是一个函数式接口（functional interface)。函数式接口只包含一个抽象方法。函数式接口可以包含多个`default methods`和`static methods`。因为函数式接口只包含一个抽象方法，可以在实现该方法时省略该方法的名称。
-```
+```java
 printPersons(
     roster,
     (Person p) -> p.getGender() == Person.Sex.MALE
@@ -111,13 +111,13 @@ printPersons(
 ## 6. 使用标准的函数式接口
 `CheckPerson`是一个简单的函数式接口。该方法如此简单，没有必要在程序声明一次。因此，JDK中定义了几个标准的功能接口，可以在`java.util.function`包中找到它们。
 可以使用`Predicate<T>`接口替换`CheckPerson`，这个接口有一个方法`boolean test(T t)`
-```
+```java
 interface Predicate<T> {
     boolean test(T t);
 }
 ```
 使用`Predicate<T>`接口替换`CheckPerson`，如下：
-```
+```java
 printPersonsWithPredicate(
     roster,
     p -> p.getGender() == Person.Sex.MALE

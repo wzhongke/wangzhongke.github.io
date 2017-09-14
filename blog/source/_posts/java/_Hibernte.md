@@ -1,8 +1,9 @@
 ---
 title: "Hibernate学习笔记"
 date: 2017-07-23 17:16:32
-tags: [java]
-categories: java
+tags: ["java"]
+categories: ["java"]
+menu: "main"
 ---
 
 Hibernate 是一个高性能的对象/关系型持久化存储和查询的工具。Hibernate 不仅关注于从 Java 类到数据库表的映射（也有 Java 数据类型到 SQL 数据类型的映射），另外也提供了数据查询和检索服务。
@@ -23,6 +24,7 @@ Hibernate能够表示应用程序数据的Java和JDBC的表示。Hibernate的`ty
 值类型是没有生命周期的数据，为有生命周期实体类型所有。包含Java的基本类型，嵌套类型和集合类型
 ### 实体类型
 实体是使用唯一标识符与数据库表中的行相关联的域模型类。 由于需要一个唯一的标识符，实体独立存在并定义自己的生命周期。`Contact`类本身就是一个实体的例子。
+
 ```sql
 create table Contact (
     id integer not null,
@@ -56,16 +58,18 @@ public class Name {
 }
 
 ```
+
 ## 命名策略
 hibernate经过两步处理将对象名映射为数据库的表名：
 - 通过用户指定（`@Column`或`@Table`）或者hibernate自定的策略来生成一个逻辑名称；
 - 将逻辑名称映射到数据库的表名，策略为实现`PhysicalNamingStrategy`的接口
 > JPA定义的逻辑名就是数据表名
+>
 ### 隐式命名策略
+
 当实体类型没有指定其对应的数据库表名时，Hibernate会采用默认的策略解析出表名，实体属性也类似。
 ![](http://docs.jboss.org/hibernate/orm/5.2/userguide/html_single/images/domain/naming/implicit_naming_strategy_diagram.svg)
-我们可以通过设定`hibernate.implicit_naming_strategy`来指定使用哪种默认的命名策
-略：
+我们可以通过设定`hibernate.implicit_naming_strategy`来指定使用哪种默认的命名策略：
 - `default`或`jpa`采用的命名策略是`org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl`
 - `legacy-hbm`: Hibernate的命名策略
 - 指定一个实现`org.hibernate.boot.model.naming.ImplicitNamingStrategy`接口的命名策略

@@ -1,8 +1,8 @@
 ---
 title: 'java中的先赋值再定义'
 date: 2015-04-02 11:32:36
-tags: [java error]
-categories: java,错误
+tags: ["java", "error"]
+categories: ["java", "error"]
 ---
 
 如下代码

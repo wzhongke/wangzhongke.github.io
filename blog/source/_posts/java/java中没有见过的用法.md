@@ -2,7 +2,7 @@
 title: "java中没有见过的用法"
 date: 2017-07-20 17:16:32
 tags: [java]
-categories: java
+categories: [java]
 ---
 
 # interface & interface
