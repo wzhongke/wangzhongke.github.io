@@ -76,6 +76,9 @@ visitFile: test.go
 postVisitDirectory: src
 postVisitDirectory: golang
 ```
+
+> 注意： 路径中如果有中文，可能会有问题
+ 
 java中提供了实现`FileVisitor`的接口的类`SimpleFileVisitor`，可以按需覆盖默认方法，简化编写代码。
 
 ## 文件的创建和删除

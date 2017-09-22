@@ -127,10 +127,14 @@ locate [-ir] 文件名
 4. find: 在目录下搜索文件，与xargs一起使用，功能强大
 ```bash
 find [PATH] [option] [action]
+# 与时间有关的参数有 -atime, -ctime, -mtime, 这三个参数使用方法类似。
 -mtime n: 在n天之前的 一天内 被更改过的文件
 -mtime +n: 在n天之前（不含n天）被更改过的文件
 -mtime -n: 在n天之内（含n天） 被更改过的文件
 -newer file: file问一个文件的路径，列出比file新的文件
+
+-type TYPE: 查找的文件类型，主要有： 一般文件(f), 设备文件(b,c), 目录(d), 连接文件(l), socket(s)等
+-perm [+/-]mode: 查找文件权限，刚好等于mode， "-" 表示文件权限必须包含 mode， "+" 表示文件权限包含任一 mode
 
 -name filename: 查找文件名为filename的文件， 使用通配符表示文件名时，需要加上 ''
 -size [+-]SIZE: 查找比size还要大(+)或小(-)的文件 ,可以是用K\M\G
@@ -140,6 +144,7 @@ find / -exec ls -l {}\;
 find命令会将所有匹配到的文件一起传递给exec执行，但有些系统对能够传递给exec的命令有长度限制，会出现溢出错误。这时候可以使用xargs。
 find . | xargs grep xxx: 查找当前目录下含有x的文件
 ```
+
 ## 更改权限
 权限分数为： r(read)=4, w(write)=2, x(execute)=1
 ```bash
@@ -265,7 +270,7 @@ tar [-j|-z] [xv] [-f 新建的文件名] [-C 目录]
 --exclude=FILE: 在压缩过程中，不打包FILE
 
 ## 示例
-tar-zcv -f filename.tar.gz 要压缩的文件或目录名 #压缩
+tar -zcv -f filename.tar.gz 要压缩的文件或目录名 #压缩
 tar  -zxv -f filename.tar.gz -C 欲解压的目录  # 解压
 tar -jcv -f system.tar.bz2 --exclude=/etc* --exclude=gz* /etc/root
 ```
@@ -315,11 +320,12 @@ last | cut –d ' ' –f 1,2
 ```
 2. `grep` 可用正则
 ```bash
-grep [-cinv] [--color=auto] '查找字符串(正则)' filename
+grep [-cinvP] [--color=auto] '查找字符串(正则)' filename
     -c : 计算找到字符串的次数
     -i : 忽略大小写
     -n : 给出行号
     -v : 反向选择
+    -P : 用Perl正则表达式来匹配
 grep -–color=auto 'manpath' /etc/man.config
 ```
 3. `sort` 排序命令
@@ -340,6 +346,7 @@ uniq [-ic]
     -i: 忽略大小写字符的不同 
     -c: 进行计数
 ```
+
 ## 时间
 `date`命令能够通过`date +Format`设置输出格式
 ```bash
@@ -360,6 +367,7 @@ date +%Y%m%d%H%M%S   => 20170617194225
 date -s 06/17/2017
 date -s 19:42:25
 ```
+
 ## 磁盘与目录容量
 1. `df` : 列出文件系统的整体磁盘使用量
 ```shell
@@ -372,7 +380,7 @@ df [-ahikHTm] [目录或文件名]
 2. `du` : 评估文件系统的磁盘使用量
 ```shell
 du [-ahskm] 文件或目录名称
-    -a : 列出所有的文件与目录的容量，因为默认仅统计目录下面的文件量 
+    -a : 列出所有的文件与目录的容量，因为默认仅统计目录下面的文件量，不能同 s 一起使用
     -h : 以较易阅读的格式显示
     -s : 列出总量，不列出每个个别的目录占用量
     -S : 尚不理解
@@ -396,5 +404,149 @@ lsof
     -h : 显示帮助信息
     -v : 显示版本信息
 ```
+
+## 远程同步命令
+### `rsync`命令
+`rsync`命令是用来远程同步数据的，可以通过LAN/WAN快速同步多台机器间的文件。`rsync`通过自己的算法来比较本地和远程文件的不同部分，而不是每次都整份传送，所以速度比`scp`快。
+`:`表明是通过远程shell连接，而`::` 和 `rsync://` 用于连接到rsync守护进程，它需要 src 或 dest 以模块名称开头
+```bash
+# 拷贝本地文件
+rsync [options] src dest
+# 使用一个远程shell程序将本地机器的内容拷贝到远程机器
+rsync [options] src [user@]host:dest
+# 使用一个远程shell将远程机器拷贝到本地机器
+rsync [options] [user@]host:src dest
+# 从远程rsync服务器中拷贝文件到本地机器
+rsync [options] [user@]host::src dest
+# 从本地机器拷贝文件到远程rsync服务器中
+rsync [options] src [user@]host::dest
+# 列远程机器的文件列表，类似rsync传输，不过需要在命令中省略本地机器
+rsync [options] rsync://[user@]host[:port]/src [dest]
+
+## 参数
+-v, --verbose: 详细模式输出
+-q, --quiet: 精简模式输出
+-c, --checksum: 打开校验开关
+-a, --archive: 归档模式，表示以递归方式传输文件，并保持所有文件属性，相当于 `-rlptgoD`
+-r, --recursive: 对子目录以递归模式处理
+-R, --relative: 使用相对路径信息
+-b, --backup: 创建备份
+    --backup-dir=DIR 将备份文件放到 DIR 中
+    --suffix=SUFFIX: 定义备份文件前缀
+-u, --update: 跳过接收机器上较新的文件
+-d, --dirs: 不会递归地传输目录
+-l, --link: 保留软连接
+-k, --copy-dirlinks: 将符号链接转换为指定目录
+-K, --keep-dirlinks: 将符号链接作为一个递归的目录
+-H, --hard-links: 保留硬链接
+-p, --perms: 保持文件权限
+-o, --owner: 保持文件属主信息
+-g, --group: 保持文件属组信息。 
+-D, --devices: 保持设备文件信息
+** -t, --times: 保持文件时间信息  **
+-S, --sparse: 对稀疏文件进行特殊处理以节省DST的空间
+-w, --whole-file: 拷贝文件，不进行增量检测 
+-x, --one-file-system: 不要跨越文件系统边界
+-B, --block-size=SIZE: 检验算法使用的块尺寸，默认是700字节
+-e, --rsh=command: 指定使用rsh、ssh方式进行数据同步
+    --rsync-path=PATH: 指定远程服务器上的rsync命令所在路径信息
+    --existing: 仅仅更新那些已经存在于DST的文件，而不备份那些新创建的文件
+    --delete: 删除那些DST中SRC没有的文件
+    --delete-excluded: 同样删除接收端那些被该选项指定排除的文件
+    --delete-after: 传输结束以后再删除
+    --ignore-errors: 即使出现IO错误也进行删除
+    --max-delete=NUM: 最多删除NUM个文件
+-C, --cvs-exclude: 使用和CVS一样的方法自动忽略文件，用来排除那些不希望传输的文件
+-P, --partial: 保留那些因故没有完全传输的文件，以是加快随后的再次传输
+--force: 强制删除目录，即使不为空
+--numeric-ids: 不将数字的用户和组id匹配为用户名和组名
+--timeout=time: ip超时时间，单位为秒
+-I, --ignore-times: 不跳过那些有同样的时间和长度的文件
+--size-only: 当决定是否要备份文件时，仅仅察看文件大小而不考虑文件时间
+--modify-window=NUM: 决定文件是否时间相同时使用的时间戳窗口，默认为0
+-T --temp-dir=DIR: 在DIR中创建临时文件
+--compare-dest=DIR: 同样比较DIR中的文件来决定是否需要备份。
+--progress: 显示备份过程
+-z, --compress: 对备份的文件在传输时进行压缩处理
+    --exclude=PATTERN: 指定排除不需要传输的文件模式
+    --include=PATTERN: 指定不排除而需要传输的文件模式
+    --exclude-from=FILE: 排除FILE中指定模式的文件
+    --include-from=FILE: 不排除FILE指定模式匹配的文件
+    --version: 打印版本信息
+    --address: 绑定到特定的地址
+    --config=FILE: 指定其他的配置文件，不使用默认的rsyncd.conf文件
+    --port=PORT: 指定其他的rsync服务端口
+    --blocking-io: 对远程shell使用阻塞IO
+    -stats: 给出某些文件的传输状态
+    --progress: 在传输时现实传输过程
+    --password-file=FILE: 从FILE中得到密码
+-i, --itemize-changes: 输出所有更新的更改摘要
+     --out-format=FORMAT     使用指定的FORMAT输出
+     --log-file=FILE         将rsync做的操作记录到FILE中
+     --list-only             只列出文件，而不拷贝
+     --bwlimit=KBPS          限制I/O带宽，KBytes per second
+-h, --help: 显示帮助信息。
+```
+示例：
+```bash
+rsync -azi machine::user/path/dir/ /search/odin/ --exclude '*_log*'
+```
+
+## 定时任务
+在linux上，使用 `crontab` 来创建循环性工作调度。当然为了安全，可以通过`/etc/cron.allow`和`/etc/cron.deny`来限制用户使用 `crontab`。
+当用户是用`crontab`来新建工作调度时，该项工作就会被记录到 `/var/spool/cron` 中，而且是以用户的账户来作为判别的。一般来说，不建议直接编辑`/var/spool/cron`中的文件，因为可能会由于输入语法错误，而导致 cron 不能正确执行。
+```bash
+crontab [-u username] [-l|-e|-r]
+-u: 只有root才能使用这个参数，可以用其他用户的名义新建/删除 crontab 任务 
+-l: 查看 crontab 的内容
+-e: 编辑 crontab 的内容
+-r: 删除所有的 crontab 的工作内容
+
+## 示例
+## 使用 crontab -e 进入到任务编辑页面
+crontab -e  
+ 0  1  *  *  * shell exec.sh
+#分 时 日 月 周   执行内容
+```
+只要通过 `:wq` 或者 `:x`，保存退出后，任务就自动定时执行。
+配置时间方式如下表所示
+
+分 | 时 | 日期 | 月 | 周 | 命令
+:--|:--|:----|:---|:---|:---
+0-59| 0-23| 1-31|1-12|0-7| command
+
+“周”的0和7都是代表星期日的意思。还有一些辅助字符，如下：
+
+特殊字符 | 代表意义
+:-------| :--------
+\* (星号) | 代表任何时刻都接受，上例中，表示无论日月周是什么，知道是1点钟，就执行命令
+, (逗号)  | 代表分隔时段的意思。如要执行任务的时间是 3:00 和 6:00, 那么配置是： `0 3,6 * * * command`
+\- (减号)  | 代表一段时间范围内。8点到12点的每小时的20分钟执行任务，那么配置是： `20 8-12 * * * command`
+/n        | n是数字，即每隔 n 单位的时间间隔执行命令。例如每五分钟执行一次： `*/5 * * * * command` 
+
+`contab -e` 是针对用户的 cron 来设计的，如果是系统例行性任务，可以直接编辑 `/etc/crontab` 这个文件。 `/etc/crontab` 是一个纯文本文件，可以用root账号编辑。
+cron 服务最低的检测限制是“分钟”，所以cron 会每分钟去读取一次 `/etc/crontab` 与 `/var/spool/cron` 中的数据，所以，只要编辑并保存这些文件，就会生效。如果不生效，可以使用 `/etc/init.d/crondrestart` 来重启 cron 服务。
+
+## bash环境中的特殊符号
+bash环境中，有些符号是有特殊意义的：
+符号   | 意义
+:-----|:----
+ #    | 注释符号，最常用于script中
+ \    | 转义符号，之后跟的特殊符号作为一般符号处理
+ \|   | 管道，分割两个管道命令
+ ;    | 连续命令执行分隔符
+ ~    | 用户的主文件夹
+ $    | 使用变量前导符号
+ &    | 将命令在后台运行
+ /    | 目录符号
+\ >, >>| 数据流重定向，输出导向
+<, << | 数据流重定向， 输入导向
+''    | 单引号，不具有变量置换的功能
+""    | 双引号，具有变量置换的功能，其中的变量会用其值替换
+\`\`    | 两个 \` 中间为可以先执行的命令，也可以使用 $()
+()     | 中间为子shell的起始与结束
+{ }    | 中间为命令块的组合
+
+
 ## 其他快捷方式
 1. 使用快捷键 `ctrl+r` 可以快速使用历史命令

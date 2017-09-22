@@ -234,3 +234,6 @@ sh [-nvx] script.sh
 -v: 执行script前，将script内容输出到屏幕上
 -x: 将使用到的script内容显示到屏幕上
 ```
+
+## 环境变量
+可以用 `export` 来将自定义变量转换成环境变量

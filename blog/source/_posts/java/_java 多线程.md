@@ -97,6 +97,9 @@ job priority:10 count:3733771
 job priority:10 count:3731136
 ```
 ## Daemon线程
-Daemon线程是一种支持型线程，因为它主要被用作后台调度以及支持性工作。当一个Java虚拟机中不存在非Daemon线程时，Java虚拟机将会退出。通过调用`Thread.setDaemon(true)`将线程设置为Daemon线程。
-> Daemon属性需要在启动线程之前设置才有效
+Daemon线程是一种支持型线程，因为它主要被用作后台调度以及支持性工作。当一个Java虚拟机中不存在非Daemon线程时，Java虚拟机将会退出，此时Daemon线程都需要立即终止。
+通过调用`Thread.setDaemon(true)`将线程设置为Daemon线程。
+> Daemon属性需要在启动线程之前设置才有效，不要依靠finally块中的内容来确保执行关闭或者清理资源。
+
+
 

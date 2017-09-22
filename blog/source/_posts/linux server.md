@@ -1,5 +1,9 @@
 ---
-title:  linux 服务器篇读书笔记
+title: linux 网络常用命令
+date: 2017-0921 12:00:00
+tags: ["other"]
+categories: ["other"]
+menu: "main"
 ---
 # linux 常用网络命令
 ## `ifconfig`, `ifup`, `ifdown`
@@ -153,7 +157,7 @@ tcp        0      0 0.0.0.0:8080                0.0.0.0:*                   LIST
 # 观察本机上头所有的网络联机状态
 netstat -atunp
 
-```
+``` 
 netstat的输出主要分为两大部分：TPC/IP的网络接口；传统的Unix socket。输出参数的含义如下：
 - Proto: 联机封包协议，TCP/UDP等
 - Recv-Q: 非由用户程序连接所复制而来的总bytes数，
