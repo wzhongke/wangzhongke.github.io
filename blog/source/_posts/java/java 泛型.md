@@ -44,6 +44,13 @@ class ArrayAlg {
     }
 }
 ```
+下面的方式避免了返回结果是 `Object`：
+```java
+public static <T> T convertXmlStrToObject(Class<T> clazz, String xmlStr) {
+    // do something
+}
+```
+
 该方法可以用如下方式调用：
 ```java
 String middle = ArrayAlg.<String>getMiddle("1", "2", "4");
@@ -101,7 +108,7 @@ public class Interval implements Serializable {
 }
 ```
 
-### 泛型表达式的擦除
+### 泛型表达式的擦除TY
 当调用一个泛型方法时，编译器会在返回类型擦除之后，插入类型转换的代码。
 ```java
 Pair<Employee> pairs = new Pair<>();

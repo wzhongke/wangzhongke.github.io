@@ -54,17 +54,7 @@ mysql -uroot -p --prompt 提示符
 mysql> prompt 提示符
 ```
 
-# MySQL简单的命令
-1. 查看当前服务器版本： `SELECT VERSION();`
-2. 显示当前日期： `SELECT NOW();`
-3. 显示当前用户： `SELECT USER();`
-4. 查看所有的数据库： `SHOW DATABASES;`
-5. 查看警告信息： `SHOW WARNINGS;`
-6. 查看数据库表的创建信息： `SHOW CREATE db_name;`
-7. 查看当前打开的数据库： `SHOW DATABASE();`
-8. 查看数据库中的表: `SHOW TABLES [FROM db_name] [LIKE 'pattern' | WHERE expr];`
-9. 查看数据库表的结构: `SHOW COLUMNS FROM tb_name`
-10. 查看数据表的创建语句： `SHOW CREATE TABLE tb_name;`
+
 
 ## 创建数据库
 ```sql
@@ -91,45 +81,6 @@ ALTER DATABASE test2 CHARACTER SET = utf8
 DROP {DATABASE | SCHEMA} [IF EXISTS] db_name;
 ```
 
-# MySQL 数据类型
-数据类型是指列、存储过程参数、表达式和局部变量的数据特征，它决定了数据的存储格式，代表了不同的信息类型。
-## 整型
-可以根据下表选择需要的整型类型，既能保证能存储所需数值，又能节省空间。 `UNSIGNED` 无符号值
-数据类型   | 存储范围              | 字节
-:--------|:---------------      |:-------------
-tinyint   | 有符号值： -128到127 (-2^7 到 2^7-1) <br> 无符号值： 0到255 (0到2^8-1)   | 1字节
-samllint  | 有符号值： -32768到32767 (-2^15 到 2^15-1) <br> 无符号值： 0到65535 (0到2^16-1)   | 2字节
-mediumint | 有符号值： -2^23 到 2^23-1 <br> 无符号值： 0到2^24-1   | 3 字节 (3*8)
-int       | 有符号值： -2^31 到 2^31 -1 <br> 无符号值： 0 到 2^32-1 | 4 字节
-bigint    | 有符号值： -2^63 到 2^63 -1 <br> 无符号值： 0 到 2^64-1 | 8 字节
-
-## 浮点型
-数据类型               |  存储范围
-:----------------| :-----------
-float[(M,D)]     |-3.402823466E+38 到 -1.175494351E-38、0 和 1.175494351E-38 到 3.402823466E+38 <br> M 是数字的总位数，D是小数点后边的位数。如果没有M和D，那么根据硬件允许的限制来保存值。单精度浮点数精确到大概7位小数
-double[(M,D)]    | -1.7976931348623157E+308 到 -2.2250738585072014E-308、 0 和 2.2250738585072014E-308 到 1.7976931348623157E+308
-
-## 日期类型
-数据类型      | 存储需求
-:------------| :-----
-year        | 1
-time        | 3
-date        | 3
-datetime    | 8
-timestamp   | 4
-
-## 字符型
-
-数据类型                  | 存储需求
-:----------------------- |:----------
-char(M)                  | M 个字节，定长类型， 0 <= M <= 255
-varchar(M)              | L+1个字节(变长类型)，L<=M && 0 <= M <= 65536
-tinytext                | L+1个字节，L < 2^8
-text                    | L+2 个字节，L < 2^16
-mediumtext              | L+3 个字节，L < 2^24
-longtext                | L+4 个字节，L < 2^32
-enum('value1', 'value2', ...) | 1或2个字节，取决于枚举值的个数 (最大65535个值)
-set('value1','value2', ...) | 1,2,3,4或8个字节，取决于set成员的数目(最多64个成员)
 
 ## 创建表
 ```sql
@@ -155,3 +106,60 @@ REPLACE [INTO] ta_name [(col_name, ...)] VALUES (val, ...) [(s_val, ...)]
 SELECT expr, ...    FROM tb_name;
 ```
 
+
+## 约束
+1. 约束是为了保证数据的完整性和一致性
+2. 约束分为表级约束和列级约束
+3. 约束有五种类型： 非空约束(NOT NULL)，主键约束(PRIMARY KEY)，唯一约束(UNIQUE KEY)，默认约束(DEFAULT), 外键约束(FOREIGN KEY)
+
+### MySQL主键约束 (PRIMARY KEY)
+主键（PRIMARY KEY）约束：
+- 每张数据表只能存在一个主键
+- 主键保证记录的唯一性
+- 主键自动为NOT NULL
+
+### 唯一约束 (UNIQUE KEY)
+- 唯一约束可以保证记录的唯一性
+- 唯一约束的字段可以为空值 (NULL)
+- 每个数据表可以存在多个唯一约束
+
+### 默认约束 (DEFAULT)
+当插入记录时，如果没有为字段赋值，则自动赋予默认的值
+
+```sql
+CREATE TABLE tb_name (
+    id smallint unsigned auto_increment primary key,
+    username varchar(20) unique key,
+    sex enum('1','2','3') default '3'
+);
+```
+
+### 外键约束
+外键列有如下要求：
+1. 父表与子表必须使用相同的存储引擎，而且禁止使用临时表
+2. 数据表的存储引擎只能用 InnoDB
+3. 外键列和参考列必须具有相似的数据类型。其中数字的长度或是否有符号位必须相同；字符串的长度可以不同
+4. 外键列和参考列必须创建索引。如果外键列不存在索引，MySQL将会自动创建索引。 
+
+外键语法： `FOREIGN KEY (column_child) REPERENCES tb (column_parent)`， 其中 `tb` 是父表
+
+外键约束的参照操作：
+1. CASCADE: 从父表删除或更新且自动删除或更新子表中匹配的行
+2. SET NULL: 从父表删除或更新行，并设置子表中的外键列为NULL。使用该选项，必须保证子表列没有指定NOT NULL
+3. RESTRICT: 拒绝对父表的删除或更新操作
+4. NO ACTION: 在MySQL中同RESTRICT相同
+
+```sql
+CREATE TABLE tb_name (
+    id smallint unsigned auto_increment primary key,
+    username varchar(20) unique key,
+    sex enum('1','2','3') default '3',
+    pid varchar(20) not null,
+    foreign key (pid) references tb (id) on delete cascade
+);
+```
+
+### 列级约束和列级约束
+对一个数据列建立的约束，称为列级约束
+对多个数据列建立的约束，称为表级约束
+列级约束既可以在列定义时声明，也可以在列定义后声明；表级约束只能在列定义后声明

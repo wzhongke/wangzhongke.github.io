@@ -71,3 +71,14 @@ categories: linux
 ```
 `cluster`可以配置不同的服务，`id`属性是其服务唯一的标记
 `server-default`中的`http`的`port`配置了该服务监听的端口，`web-app`的`id`属性定义了服务的访问路径，`root-directory`定义了服务代码放置的位置。
+
+## 配置远程调试端口
+
+在 resin3.1下的版本中，修改 bin/httpd.sh 文件中的配置
+```
+args="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8787"
+```
+在 resin3.1 以上的版本中，修改 conf/resin.properties 文件
+```
+jvm_args  :  -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=9090  
+```
