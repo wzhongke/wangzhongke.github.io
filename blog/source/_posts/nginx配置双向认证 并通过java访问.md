@@ -130,7 +130,7 @@ ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
 ![](https://thumbnail0.baidupcs.com/thumbnail/aa0e5bd8524d12cea6429c15e9682d9f?fid=2318483978-250528-393924946231140&time=1497780000&rt=sh&sign=FDTAER-DCb740ccc5511e5e8fedcff06b081203-hdynUkKCDnjIDRkD%2FWFc0V0CQb0%3D&expires=8h&chkv=0&chkbd=0&chkpc=&dp-logid=3914457463978335134&dp-callid=0&size=c710_u400&quality=100&vuk=-&ft=video)
 
 ## 使用java完成双向认证
-将生成的证书： client/client.p12 和 ca/ca.crt 拷贝出来。用java做双向认证时，会使用到这两个文件。
+将生成的证书： users/client.p12 和 private/ca.crt 拷贝出来。用java做双向认证时，会使用到这两个文件。
 java 双向认证的代码如下：
 ```bash
 private final static String P12_PATH = "client.p12";   //客户端证书路径

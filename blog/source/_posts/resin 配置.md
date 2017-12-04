@@ -82,3 +82,8 @@ args="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8787"
 ```
 jvm_args  :  -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=9090  
 ```
+或者修改 resin.xml 文件，在 `server-default` 标签下，添加
+```xml
+<jvm-arg>-Xdebug</jvm-arg>
+<jvm-arg>-Xrunjdwp:transport=dt_socket,address=9988,server=y,suspend=n</jvm-arg>
+```

@@ -1,3 +1,10 @@
+---
+title: java 多线程
+date: 2017-09-05
+tags: ["java"]
+categories: ["java"]
+---
+
 ## 术语解释
 1. CAS(Compare and Swap, 比较并交换)： 
 > 解释： CAS操作需要两个输入，一个旧值和一个新值。在操作期间先比较旧值，如果没有变化，才交换成新值，否则不交换。

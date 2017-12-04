@@ -1,8 +1,8 @@
 ---
 title : vue 学习笔记
-date: 2017-06-17 19:42:25
-tags: [javascript]
-categories: javascript
+date: 2017-01-21 12:00:00
+tags: ["javascript"]
+categories: ["javascript"]
 ---
 
 ## 属性和方法
@@ -20,7 +20,6 @@ data.a // -> 2
 data.a = 3
 vm.a // -> 3
 ```
-<!-- more -->
 在vue中只有被代理的属性才会被监控，如果在创建Vue后，再data中新添加属性，是不会被监控的，也就是更新值没有任何响应。可以通过$watch方法加入响应 。
 Vue中自带一些以`$`开头的属性和方法：
 ```vue
@@ -1148,117 +1147,4 @@ bus.$on('id-selected', function (id) {
   // ...
 })
 ```
-## 使用slot分发内容
-在使用组件的时候，尝尝会像这样组合他们：
-```
-<app>
-  <app-header></app-header>
-  <app-footer></app-footer>
-</app>
-```
-1. `<app>`组件不知道它会收到什么内容，这是由使用`<app>`的父组件决定的
-2. `<app>`组件可能有他自己的模板
-为了让组件可以组合，我们可以使用**内容分发**来混合父组件的内容和子组件自己的模板，使用`<slot>`元素作为原始内容的插槽。
-
-### 编译作用域
-我们需要先明确内容在哪个作用域里编译，假定模板为：
-```
-<child-component>
-  {{ message }}
-</child-component>
-```
-`message`绑定到的是父组件的数据。组件的作用域简单地说就是：
-父组件模板的内容在父组件作用域内编译；子组件模板的内容在子组件作用域内编译。
-一个常见错误是试图在父组件模板内将一个指令绑定到子组件的属性/方法：
-```
-<!-- 无效 -->
-<child-component v-show="someChildProperty"></child-component>
-```
-上例中，父组件不知道子组件的状态。
-如果要绑定作用域内的指令到一个组件的根节点，应当在组件自己的模板上做：
-```
-Vue.component('child-component', {
-  // 有效，因为是在正确的作用域内
-  template: '<div v-show="someChildProperty">Child</div>',
-  data: function () {
-    return {
-      someChildProperty: true
-    }
-  }
-})
-```
-### 单个slot
-如果子组件模板中不包含`<slot>`，父组件的内容才会被丢弃。当子组件模板只有一个没有属性的 slot 时，父组件整个内容片段将插入到 slot 所在的 DOM 位置，并替换掉 slot 标签本身。
-`<slot>` 标签中的任何内容都被视为备用内容。只有在没有分发内容时，才会显示.
-假定`my-component`组件有下面模板：
-```
-<div>
-  <h2>我是子组件的标题</h2>
-  <slot>
-    只有在没有要分发的内容时才会显示。
-  </slot>
-</div>
-```
-父组件模板：
-```
-<div>
-  <h1>我是父组件的标题</h1>
-  <my-component>
-    <p>这是一些初始内容</p>
-    <p>这是更多的初始内容</p>
-  </my-component>
-</div>
-```
-渲染结果：
-```
-<div>
-  <h1>我是父组件的标题</h1>
-  <div>
-    <h2>我是子组件的标题</h2>
-    <p>这是一些初始内容</p>
-    <p>这是更多的初始内容</p>
-  </div>
-</div>
-```
-### 有名字的slot
-`<slot>`元素可以用一个特殊的属性`name`来配置如何分发内容。多个`slot`可以有不同的名字。具名`slot`将匹配内容片段中有对应`slot`特性的元素。
-仍然可以有一个匿名`slot`，它是默认`slot`，作为找不到匹配的内容片段的备用插槽。如果没有默认的`slot`，这些找不到匹配的内容片段将被抛弃。
-假如，有一个`app-layout`组件，它的模板为：
-```
-<app-layout>
-  <h1 slot="header">这里可能是一个页面标题</h1>
-  <p>主要内容的一个段落。</p>
-  <p>另一个主要段落。</p>
-  <p slot="footer">这里有一些联系信息</p>
-</app-layout>
-
-```
-父组件模板：
-```
-<div class="container">
-  <header>
-    <slot name="header"></slot>
-  </header>
-  <main>
-    <slot></slot>
-  </main>
-  <footer>
-    <slot name="footer"></slot>
-  </footer>
-</div>
-```
-渲染结果为
-```
-<div class="container">
-  <header>
-    <h1>这里可能是一个页面标题</h1>
-  </header>
-  <main>
-    <p>主要内容的一个段落。</p>
-    <p>另一个主要段落。</p>
-  </main>
-  <footer>
-    <p>这里有一些联系信息</p>
-  </footer>
-</div>
-```
+### 使用slot分发内容
